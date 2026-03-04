@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LAB-M | SYNC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #050505; color: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: sans-serif; overflow: hidden; }
+        #L_O { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+    <div id="L_O">
+        <input type="password" id="_PASS" placeholder="KEY_INPUT" class="bg-black border-b border-white/20 text-center w-48 p-2 outline-none text-white tracking-[5px]">
+        <button onclick="_VAL()" class="mt-8 text-[9px] text-white/30 tracking-[3px]">INIT_SYNC</button>
+    </div>
+    <div id="_UI" class="hidden text-center">
+        <h1 id="_MSG" class="text-4xl font-bold animate-pulse text-white">SINAL ATIVO</h1>
+    </div>
+    <script>
+        const _SP = window.speechSynthesis;
+        function _VOZ(t) { _SP.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang='pt-BR'; m.rate=2.2; _SP.speak(m); }
+        function _VAL() { if(document.getElementById('_PASS').value === "jarvis102") { document.getElementById('L_O').style.display='none'; document.getElementById('_UI').classList.remove('hidden'); _VOZ("Módulo Mobile Online. Blindagem ativa."); } }
+    </script>
+</body>
+</html>
