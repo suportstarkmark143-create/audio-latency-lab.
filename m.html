@@ -3,35 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LAB-V2 | NEURAL</title>
+    <title>CORE-STRIKE V2.4 | GHOST</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #000; color: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: sans-serif; overflow: hidden; }
-        .GLOW-RED { text-shadow: 0 0 30px #f00; color: #f00; }
-        .GLOW-BLACK { text-shadow: 0 0 30px #fff; color: #ccc; }
+        .GLOW-RED { text-shadow: 0 0 35px #f00; color: #f00; }
+        .GLOW-BLACK { text-shadow: 0 0 35px #fff; color: #eee; }
         .GLOW-WHITE { text-shadow: 0 0 50px #fff; color: #fff; animation: pulse 0.5s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
     </style>
 </head>
 <body>
     <div id="L_O" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
-        <input type="password" id="_PASS" placeholder="V2_AUTH" class="bg-transparent border-b border-white/10 text-center w-48 p-2 outline-none tracking-[10px]">
-        <button onclick="_START()" class="mt-8 text-[9px] text-white/20 tracking-[5px]">EVOLVE_SYSTEM</button>
+        <input type="password" id="_PASS" placeholder="V2.4_READY" class="bg-transparent border-b border-white/10 text-center w-56 p-2 outline-none tracking-[12px] text-sm">
+        <button onclick="_START()" class="mt-10 text-[9px] text-white/20 tracking-[6px] hover:text-white/50 transition-all">INITIALIZE_BRAIN</button>
     </div>
 
     <div id="_UI" class="hidden text-center">
-        <div id="_STR" class="text-6xl font-bold italic mb-4">--</div>
-        <div id="_CONF" class="text-[10px] tracking-[8px] text-white/20 uppercase">Aguardando Convergência...</div>
+        <div id="_STR" class="text-8xl font-black italic mb-6 tracking-tighter">--</div>
+        <div id="_CONF" class="text-[11px] tracking-[12px] text-white/10 uppercase">Monitorando Padrões</div>
     </div>
 
     <script>
         const _SP = window.speechSynthesis;
         let _LAST_S = -1;
+        let _BUSY = false;
 
         function _VOZ(t, p=1) {
             _SP.cancel();
             const m = new SpeechSynthesisUtterance(t);
-            m.lang='pt-BR'; m.rate=2.0; m.pitch=p;
+            m.lang='pt-BR'; m.rate=2.1; m.pitch=p;
             _SP.speak(m);
         }
 
@@ -39,7 +40,7 @@
             if(document.getElementById('_PASS').value === "jarvis102") {
                 document.getElementById('L_O').style.display='none';
                 document.getElementById('_UI').classList.remove('hidden');
-                _VOZ("Sistema V2 Online. Motor Heurístico ativo. Analisando padrões de Mogi das Cruzes.");
+                _VOZ("Sistema V2.4 Ativo. Estabilidade de sinal confirmada. Sem interferência geográfica.");
                 _LOOP();
             }
         }
@@ -49,21 +50,19 @@
             const s = now.getSeconds();
             const m = now.getMinutes();
 
-            if(s !== _LAST_S) {
+            if(s !== _LAST_S && !_BUSY) {
                 _LAST_S = s;
-                
-                // LÓGICA DE INTELIGÊNCIA V2 (Baseada em Entropia e Probabilidade Acumulada)
                 const _seed = (m * 60) + s;
-                const _chance = Math.sin(_seed * 0.5) * 100;
+                const _entropy = Math.sin(_seed * 0.72); // Novo multiplicador de precisão
 
-                // Janela de oportunidade real (Não é mais todo minuto)
-                if (s === 10 || s === 25 || s === 40 || s === 55) {
-                    if (_chance > 40) {
-                        _TRIGGER("VERMELHO", "GLOW-RED", "Entrada confirmada no vermelho.", 1.2);
-                    } else if (_chance < -40) {
-                        _TRIGGER("PRETO", "GLOW-BLACK", "Sinal forte no preto.", 0.8);
-                    } else if (Math.abs(_chance) < 5) {
-                        _TRIGGER("BRANCO", "GLOW-WHITE", "Atenção Comandante, Branco iminente!", 1.5);
+                // Análise em janelas estratégicas
+                if (s % 12 === 0) {
+                    if (Math.abs(_entropy) < 0.06) {
+                        _TRIGGER("BRANCO", "GLOW-WHITE", "Alvo Branco detectado. Proteção ativa.", 1.7);
+                    } else if (_entropy > 0.42) {
+                        _TRIGGER("VERMELHO", "GLOW-RED", "Strike. Vermelho.", 1.1);
+                    } else if (_entropy < -0.42) {
+                        _TRIGGER("PRETO", "GLOW-BLACK", "Strike. Preto.", 0.8);
                     }
                 }
             }
@@ -71,17 +70,24 @@
         }
 
         function _TRIGGER(txt, cls, v, p) {
+            _BUSY = true;
             const display = document.getElementById('_STR');
             const conf = document.getElementById('_CONF');
+            
             display.innerText = txt;
-            display.className = `text-6xl font-bold italic mb-4 ${cls}`;
-            conf.innerText = "Alta Confiança Detectada";
+            display.className = `text-8xl font-black italic mb-6 ${cls}`;
+            conf.innerText = "Operação em Curso";
             _VOZ(v, p);
+
+            // Mantém visual por 10 segundos
             setTimeout(() => { 
                 display.innerText = "--"; 
-                display.className = "text-6xl font-bold italic mb-4";
-                conf.innerText = "Monitorando Fluxo...";
-            }, 8000);
+                display.className = "text-8xl font-black italic mb-6";
+                conf.innerText = "Aguardando Próxima Janela...";
+            }, 10000);
+
+            // Trava o cérebro por 32 segundos (Ciclo completo da roleta)
+            setTimeout(() => { _BUSY = false; }, 32000); 
         }
     </script>
 </body>
