@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>LAB-N | NITRO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #000; color: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: sans-serif; }
+        #L_O { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+    <div id="L_O">
+        <input type="password" id="_PASS" placeholder="NITRO_KEY" class="bg-black border-b border-blue-900 text-center w-64 p-3 outline-none text-blue-500 tracking-[10px]">
+        <button onclick="_VAL()" class="mt-10 text-[10px] text-blue-900 tracking-[5px]">ENGAGE_SYSTEM</button>
+    </div>
+    <div id="_UI" class="hidden text-center">
+        <h1 id="_MSG" class="text-6xl font-bold text-blue-600 animate-pulse">NITRO ACTIVE</h1>
+    </div>
+    <script>
+        const _SP = window.speechSynthesis;
+        function _VOZ(t) { _SP.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang='pt-BR'; m.rate=1.8; m.pitch=0.5; _SP.speak(m); }
+        function _VAL() { if(document.getElementById('_PASS').value === "jarvis102") { document.getElementById('L_O').style.display='none'; document.getElementById('_UI').classList.remove('hidden'); _VOZ("Unidade Nitro Operacional. Compensação de trinta e seis milissegundos."); } }
+    </script>
+</body>
+</html>
