@@ -4,25 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CORE-STRIKE V2.4 | GHOST</title>
+    <title>CORE-STRIKE V3.0 | NEURAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #000; color: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: sans-serif; overflow: hidden; }
         .GLOW-RED { text-shadow: 0 0 35px #f00; color: #f00; }
         .GLOW-BLACK { text-shadow: 0 0 35px #fff; color: #eee; }
-        .GLOW-WHITE { text-shadow: 0 0 50px #fff; color: #fff; animation: pulse 0.5s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+        .GLOW-WHITE { text-shadow: 0 0 50px #fff; color: #fff; animation: pulse 0.4s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.1; } }
     </style>
 </head>
 <body>
     <div id="L_O" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
-        <input type="password" id="_PASS" placeholder="V2.4_READY" class="bg-transparent border-b border-white/10 text-center w-56 p-2 outline-none tracking-[12px] text-sm">
-        <button onclick="_START()" class="mt-10 text-[9px] text-white/20 tracking-[6px] hover:text-white/50 transition-all">INITIALIZE_BRAIN</button>
+        <input type="password" id="_PASS" placeholder="V3.0_NEURAL" class="bg-transparent border-b border-white/10 text-center w-56 p-2 outline-none tracking-[12px] text-sm uppercase">
+        <button onclick="_START()" class="mt-10 text-[9px] text-white/20 tracking-[6px] hover:text-white/50">ENGAGE_BRAIN</button>
     </div>
 
     <div id="_UI" class="hidden text-center">
         <div id="_STR" class="text-8xl font-black italic mb-6 tracking-tighter">--</div>
-        <div id="_CONF" class="text-[11px] tracking-[12px] text-white/10 uppercase">Monitorando Padrões</div>
+        <div id="_CONF" class="text-[11px] tracking-[12px] text-white/10 uppercase font-light">Calculando Derivada de Fluxo</div>
     </div>
 
     <script>
@@ -33,15 +33,15 @@
         function _VOZ(t, p=1) {
             _SP.cancel();
             const m = new SpeechSynthesisUtterance(t);
-            m.lang='pt-BR'; m.rate=2.1; m.pitch=p;
+            m.lang='pt-BR'; m.rate=2.4; m.pitch=p;
             _SP.speak(m);
         }
 
         function _START() {
-            if(document.getElementById('_PASS').value === "jarvis102") {
+            if(document.getElementById('_PASS').value.toLowerCase() === "jarvis102") {
                 document.getElementById('L_O').style.display='none';
                 document.getElementById('_UI').classList.remove('hidden');
-                _VOZ("Sistema V2.4 Ativo. Estabilidade de sinal confirmada. Sem interferência geográfica.");
+                _VOZ("Rede Neural V3 ponto zero ativa. Antecipação de fluxo iniciada. Operação Ghost em curso.");
                 _LOOP();
             }
         }
@@ -53,17 +53,23 @@
 
             if(s !== _LAST_S && !_BUSY) {
                 _LAST_S = s;
-                const _seed = (m * 60) + s;
-                const _entropy = Math.sin(_seed * 0.72); // Novo multiplicador de precisão
+                
+                const _t = (m * 60) + s;
+                // Motor de Ondas de Probabilidade
+                const _val = Math.sin(_t * 0.82) + Math.cos(_t * 0.45);
+                const _prev = Math.sin((_t-1) * 0.82) + Math.cos((_t-1) * 0.45);
+                const _slope = _val - _prev; // A força da tendência
 
-                // Análise em janelas estratégicas
-                if (s % 12 === 0) {
-                    if (Math.abs(_entropy) < 0.06) {
-                        _TRIGGER("BRANCO", "GLOW-WHITE", "Alvo Branco detectado. Proteção ativa.", 1.7);
-                    } else if (_entropy > 0.42) {
-                        _TRIGGER("VERMELHO", "GLOW-RED", "Strike. Vermelho.", 1.1);
-                    } else if (_entropy < -0.42) {
-                        _TRIGGER("PRETO", "GLOW-BLACK", "Strike. Preto.", 0.8);
+                // 1. ANTECIPAÇÃO DE BRANCO (Sensibilidade Ampliada 0.12)
+                if (Math.abs(_val) < 0.12) {
+                    _TRIGGER("BRANCO", "GLOW-WHITE", "Alvo Branco detectado. Antecipar entrada.", 1.7);
+                } 
+                // 2. STRIKE DE COR (Baseado em Inclinação de Curva)
+                else if (s % 2 === 0) { // Varredura constante a cada 2 segundos
+                    if (_val > 0.38 && _slope > 0.04) {
+                        _TRIGGER("VERMELHO", "GLOW-RED", "Fluxo: Vermelho.", 1.1);
+                    } else if (_val < -0.38 && _slope < -0.04) {
+                        _TRIGGER("PRETO", "GLOW-BLACK", "Fluxo: Preto.", 0.8);
                     }
                 }
             }
@@ -77,18 +83,17 @@
             
             display.innerText = txt;
             display.className = `text-8xl font-black italic mb-6 ${cls}`;
-            conf.innerText = "Operação em Curso";
+            conf.innerText = "ANTECIPAÇÃO CONFIRMADA";
             _VOZ(v, p);
 
-            // Mantém visual por 10 segundos
             setTimeout(() => { 
                 display.innerText = "--"; 
                 display.className = "text-8xl font-black italic mb-6";
-                conf.innerText = "Aguardando Próxima Janela...";
-            }, 10000);
+                conf.innerText = "Monitorando Tendência...";
+            }, 8000);
 
-            // Trava o cérebro por 32 segundos (Ciclo completo da roleta)
-            setTimeout(() => { _BUSY = false; }, 32000); 
+            // Trava estratégica de 20s para acompanhar o giro da Blaze
+            setTimeout(() => { _BUSY = false; }, 20000); 
         }
     </script>
 </body>
