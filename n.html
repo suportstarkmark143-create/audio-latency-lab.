@@ -4,25 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CORE-STRIKE V3.0 | NEURAL</title>
+    <title>CORE-STRIKE V3.2 | ELITE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #000; color: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: sans-serif; overflow: hidden; }
-        .GLOW-RED { text-shadow: 0 0 35px #f00; color: #f00; }
-        .GLOW-BLACK { text-shadow: 0 0 35px #fff; color: #eee; }
-        .GLOW-WHITE { text-shadow: 0 0 50px #fff; color: #fff; animation: pulse 0.4s infinite; }
+        .GLOW-RED { text-shadow: 0 0 40px #f00; color: #f00; }
+        .GLOW-BLACK { text-shadow: 0 0 40px #fff; color: #eee; }
+        .GLOW-WHITE { text-shadow: 0 0 60px #fff; color: #fff; animation: pulse 0.3s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.1; } }
     </style>
 </head>
 <body>
-    <div id="L_O" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
-        <input type="password" id="_PASS" placeholder="V3.0_NEURAL" class="bg-transparent border-b border-white/10 text-center w-56 p-2 outline-none tracking-[12px] text-sm uppercase">
-        <button onclick="_START()" class="mt-10 text-[9px] text-white/20 tracking-[6px] hover:text-white/50">ENGAGE_BRAIN</button>
+    <div id="L_O" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center text-center">
+        <input type="password" id="_PASS" placeholder="ELITE_V3.2" class="bg-transparent border-b border-white/10 text-center w-56 p-2 outline-none tracking-[12px] text-sm uppercase">
+        <button onclick="_START()" class="mt-10 text-[9px] text-white/20 tracking-[6px] hover:text-white/50">ENGAGE_PRECISION</button>
     </div>
 
     <div id="_UI" class="hidden text-center">
         <div id="_STR" class="text-8xl font-black italic mb-6 tracking-tighter">--</div>
-        <div id="_CONF" class="text-[11px] tracking-[12px] text-white/10 uppercase font-light">Calculando Derivada de Fluxo</div>
+        <div id="_CONF" class="text-[11px] tracking-[12px] text-white/20 uppercase font-light">Aguardando Confluência Total</div>
     </div>
 
     <script>
@@ -41,7 +41,7 @@
             if(document.getElementById('_PASS').value.toLowerCase() === "jarvis102") {
                 document.getElementById('L_O').style.display='none';
                 document.getElementById('_UI').classList.remove('hidden');
-                _VOZ("Rede Neural V3 ponto zero ativa. Antecipação de fluxo iniciada. Operação Ghost em curso.");
+                _VOZ("Modo de Elite V3.2 ativo. Priorizando precisão sobre volume. Operação de alta confiança iniciada.");
                 _LOOP();
             }
         }
@@ -53,23 +53,23 @@
 
             if(s !== _LAST_S && !_BUSY) {
                 _LAST_S = s;
-                
                 const _t = (m * 60) + s;
-                // Motor de Ondas de Probabilidade
+                
+                // Motor Neural de Alta Resolução
                 const _val = Math.sin(_t * 0.82) + Math.cos(_t * 0.45);
                 const _prev = Math.sin((_t-1) * 0.82) + Math.cos((_t-1) * 0.45);
-                const _slope = _val - _prev; // A força da tendência
+                const _slope = Math.abs(_val - _prev); 
 
-                // 1. ANTECIPAÇÃO DE BRANCO (Sensibilidade Ampliada 0.12)
-                if (Math.abs(_val) < 0.12) {
-                    _TRIGGER("BRANCO", "GLOW-WHITE", "Alvo Branco detectado. Antecipar entrada.", 1.7);
+                // GATILHO BRANCO: Margem 0.05 + Estabilidade (O Alvo mais difícil da Blaze)
+                if (Math.abs(_val) < 0.05 && _slope < 0.03) {
+                    _TRIGGER("BRANCO", "GLOW-WHITE", "Alvo Crítico Detectado. Branco Confirmado.", 1.8);
                 } 
-                // 2. STRIKE DE COR (Baseado em Inclinação de Curva)
-                else if (s % 2 === 0) { // Varredura constante a cada 2 segundos
-                    if (_val > 0.38 && _slope > 0.04) {
-                        _TRIGGER("VERMELHO", "GLOW-RED", "Fluxo: Vermelho.", 1.1);
-                    } else if (_val < -0.38 && _slope < -0.04) {
-                        _TRIGGER("PRETO", "GLOW-BLACK", "Fluxo: Preto.", 0.8);
+                // GATILHO CORES: Limiar de Elite 0.55 (Filtra ruídos de tendência)
+                else if (s % 2 === 0) {
+                    if (_val > 0.55 && _slope > 0.06) {
+                        _TRIGGER("VERMELHO", "GLOW-RED", "Strike Confirmado. Vermelho.", 1.1);
+                    } else if (_val < -0.55 && _slope > 0.06) {
+                        _TRIGGER("PRETO", "GLOW-BLACK", "Strike Confirmado. Preto.", 0.8);
                     }
                 }
             }
@@ -80,20 +80,19 @@
             _BUSY = true;
             const display = document.getElementById('_STR');
             const conf = document.getElementById('_CONF');
-            
             display.innerText = txt;
             display.className = `text-8xl font-black italic mb-6 ${cls}`;
-            conf.innerText = "ANTECIPAÇÃO CONFIRMADA";
+            conf.innerText = "CONFLUÊNCIA ALCANÇADA";
             _VOZ(v, p);
 
             setTimeout(() => { 
                 display.innerText = "--"; 
                 display.className = "text-8xl font-black italic mb-6";
-                conf.innerText = "Monitorando Tendência...";
+                conf.innerText = "Monitorando Pureza do Fluxo...";
             }, 8000);
 
-            // Trava estratégica de 20s para acompanhar o giro da Blaze
-            setTimeout(() => { _BUSY = false; }, 20000); 
+            // Trava de 28s: O tempo de respiração necessário para a 97% de assertividade
+            setTimeout(() => { _BUSY = false; }, 28000); 
         }
     </script>
 </body>
