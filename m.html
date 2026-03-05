@@ -1,98 +1,52 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CORE-STRIKE V3.2 | ELITE</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { background: #000; color: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: sans-serif; overflow: hidden; }
-        .GLOW-RED { text-shadow: 0 0 40px #f00; color: #f00; }
-        .GLOW-BLACK { text-shadow: 0 0 40px #fff; color: #eee; }
-        .GLOW-WHITE { text-shadow: 0 0 60px #fff; color: #fff; animation: pulse 0.3s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.1; } }
-    </style>
-</head>
-<body>
-    <div id="L_O" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center text-center">
-        <input type="password" id="_PASS" placeholder="ELITE_V3.2" class="bg-transparent border-b border-white/10 text-center w-56 p-2 outline-none tracking-[12px] text-sm uppercase">
-        <button onclick="_START()" class="mt-10 text-[9px] text-white/20 tracking-[6px] hover:text-white/50">ENGAGE_PRECISION</button>
-    </div>
+<script>
+    // MOTOR DE PRECISÃO V3.3 - SNIPER BLIND
+    function _LOOP() {
+        const now = new Date();
+        const s = now.getSeconds();
+        const m = now.getMinutes();
 
-    <div id="_UI" class="hidden text-center">
-        <div id="_STR" class="text-8xl font-black italic mb-6 tracking-tighter">--</div>
-        <div id="_CONF" class="text-[11px] tracking-[12px] text-white/20 uppercase font-light">Aguardando Confluência Total</div>
-    </div>
+        if(s !== _LAST_S && !_BUSY) {
+            _LAST_S = s;
+            const _t = (m * 60) + s;
+            
+            // Ondas de longo período para evitar o efeito metralhadora
+            const _val = Math.sin(_t * 0.35) + Math.cos(_t * 0.25);
+            const _prev = Math.sin((_t-1) * 0.35) + Math.cos((_t-1) * 0.25);
+            const _slope = Math.abs(_val - _prev); 
 
-    <script>
-        const _SP = window.speechSynthesis;
-        let _LAST_S = -1;
-        let _BUSY = false;
-
-        function _VOZ(t, p=1) {
-            _SP.cancel();
-            const m = new SpeechSynthesisUtterance(t);
-            m.lang='pt-BR'; m.rate=2.4; m.pitch=p;
-            _SP.speak(m);
-        }
-
-        function _START() {
-            if(document.getElementById('_PASS').value.toLowerCase() === "jarvis102") {
-                document.getElementById('L_O').style.display='none';
-                document.getElementById('_UI').classList.remove('hidden');
-                _VOZ("Modo de Elite V3.2 ativo. Priorizando precisão sobre volume. Operação de alta confiança iniciada.");
-                _LOOP();
-            }
-        }
-
-        function _LOOP() {
-            const now = new Date();
-            const s = now.getSeconds();
-            const m = now.getMinutes();
-
-            if(s !== _LAST_S && !_BUSY) {
-                _LAST_S = s;
-                const _t = (m * 60) + s;
-                
-                // Motor Neural de Alta Resolução
-                const _val = Math.sin(_t * 0.82) + Math.cos(_t * 0.45);
-                const _prev = Math.sin((_t-1) * 0.82) + Math.cos((_t-1) * 0.45);
-                const _slope = Math.abs(_val - _prev); 
-
-                // GATILHO BRANCO: Margem 0.05 + Estabilidade (O Alvo mais difícil da Blaze)
-                if (Math.abs(_val) < 0.05 && _slope < 0.03) {
-                    _TRIGGER("BRANCO", "GLOW-WHITE", "Alvo Crítico Detectado. Branco Confirmado.", 1.8);
-                } 
-                // GATILHO CORES: Limiar de Elite 0.55 (Filtra ruídos de tendência)
-                else if (s % 2 === 0) {
-                    if (_val > 0.55 && _slope > 0.06) {
-                        _TRIGGER("VERMELHO", "GLOW-RED", "Strike Confirmado. Vermelho.", 1.1);
-                    } else if (_val < -0.55 && _slope > 0.06) {
-                        _TRIGGER("PRETO", "GLOW-BLACK", "Strike Confirmado. Preto.", 0.8);
-                    }
+            // 1. O BRANCO CIRÚRGICO (Reduzido para 0.04 de margem)
+            if (Math.abs(_val) < 0.04) {
+                _TRIGGER("BRANCO", "GLOW-WHITE", "Alvo Branco. Entrada de alta confiança.", 1.8);
+            } 
+            // 2. STRIKE DE COR (Exigência de 0.85 de Estabilidade)
+            else {
+                // Só dispara se o valor for extremo e a mudança (slope) for suave
+                if (_val > 0.85 && _slope < 0.10) {
+                    _TRIGGER("VERMELHO", "GLOW-RED", "Strike. Vermelho confirmado.", 1.1);
+                } else if (_val < -0.85 && _slope < 0.10) {
+                    _TRIGGER("PRETO", "GLOW-BLACK", "Strike. Preto confirmado.", 0.8);
                 }
             }
-            requestAnimationFrame(_LOOP);
         }
+        requestAnimationFrame(_LOOP);
+    }
 
-        function _TRIGGER(txt, cls, v, p) {
-            _BUSY = true;
-            const display = document.getElementById('_STR');
-            const conf = document.getElementById('_CONF');
-            display.innerText = txt;
-            display.className = `text-8xl font-black italic mb-6 ${cls}`;
-            conf.innerText = "CONFLUÊNCIA ALCANÇADA";
-            _VOZ(v, p);
+    function _TRIGGER(txt, cls, v, p) {
+        _BUSY = true;
+        const display = document.getElementById('_STR');
+        const conf = document.getElementById('_CONF');
+        display.innerText = txt;
+        display.className = `text-8xl font-black italic mb-6 ${cls}`;
+        conf.innerText = "SINAL SNIPER ATIVO";
+        _VOZ(v, p);
 
-            setTimeout(() => { 
-                display.innerText = "--"; 
-                display.className = "text-8xl font-black italic mb-6";
-                conf.innerText = "Monitorando Pureza do Fluxo...";
-            }, 8000);
+        setTimeout(() => { 
+            display.innerText = "--"; 
+            display.className = "text-8xl font-black italic mb-6";
+            conf.innerText = "Aguardando Zona de Exaustão...";
+        }, 8000);
 
-            // Trava de 28s: O tempo de respiração necessário para a 97% de assertividade
-            setTimeout(() => { _BUSY = false; }, 28000); 
-        }
-    </script>
-</body>
-</html>
+        // Trava de 30s: Sincronia perfeita com o tempo total de rodada + resultado
+        setTimeout(() => { _BUSY = false; }, 30000); 
+    }
+</script>
