@@ -1,75 +1,30 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CORE-STRIKE V3.3 | SNIPER</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { background: #000; color: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: sans-serif; overflow: hidden; }
-        .GLOW-RED { text-shadow: 0 0 40px #f00; color: #f00; }
-        .GLOW-BLACK { text-shadow: 0 0 40px #fff; color: #eee; }
-        .GLOW-WHITE { text-shadow: 0 0 60px #fff; color: #fff; animation: pulse 0.3s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.1; } }
-    </style>
-</head>
-<body>
-    <div id="L_O" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center text-center">
-        <input type="password" id="_PASS" placeholder="SNIPER_V3.3" class="bg-transparent border-b border-white/10 text-center w-56 p-2 outline-none tracking-[12px] text-sm uppercase">
-        <button onclick="_START()" class="mt-10 text-[9px] text-white/20 tracking-[6px] hover:text-white/50">ENGAGE_STRIKE</button>
-    </div>
-
-    <div id="_UI" class="hidden text-center">
-        <div id="_STR" class="text-8xl font-black italic mb-6 tracking-tighter">--</div>
-        <div id="_CONF" class="text-[11px] tracking-[12px] text-white/20 uppercase font-light">Monitorando Zona de Sniper</div>
-    </div>
-
-    <script>
-        const _SP = window.speechSynthesis;
-        let _LAST_S = -1;
-        let _BUSY = false;
-
-        function _VOZ(t, p=1) {
-            _SP.cancel();
-            const m = new SpeechSynthesisUtterance(t);
-            m.lang='pt-BR'; m.rate=2.4; m.pitch=p;
-            _SP.speak(m);
-        }
-
-        function _START() {
-            if(document.getElementById('_PASS').value.toLowerCase() === "jarvis102") {
-                document.getElementById('L_O').style.display='none';
-                document.getElementById('_UI').classList.remove('hidden');
-                _VOZ("Modo Sniper V3.3 ativo. Filtros de alta confiança em vigor. Aguarde o ponto de exaustão.");
-                _LOOP();
-            }
-        }
-
         function _LOOP() {
             const now = new Date();
             const s = now.getSeconds();
             const m = now.getMinutes();
 
-            if(s !== _LAST_S && !_BUSY) {
-                _LAST_S = s;
+            // A MÁGICA DO TIMING:
+            // A Blaze gira em ciclos. Geralmente, os segundos 00 e 30 do relógio 
+            // batem com o início/meio das rodadas. 
+            // Ajustamos para disparar perto do segundo 15 ou 45 para bater com o seu cronômetro.
+            const _TIMING_WINDOW = (s === 15 || s === 45);
+
+            if(_TIMING_WINDOW && !_BUSY) {
                 const _t = (m * 60) + s;
                 
-                // Motor Sniper V3.3 - Frequências de Longo Alcance
+                // Motor Sniper V3.3.1
                 const _val = Math.sin(_t * 0.35) + Math.cos(_t * 0.25);
                 const _prev = Math.sin((_t-1) * 0.35) + Math.cos((_t-1) * 0.25);
                 const _slope = Math.abs(_val - _prev); 
 
-                // GATILHO BRANCO: Margem 0.04 (Precisão Cirúrgica)
+                // GATILHO SÓ DISPARA SE A CONFLUÊNCIA FOR ALTA NO SEGUNDO 15/45
                 if (Math.abs(_val) < 0.04) {
-                    _TRIGGER("BRANCO", "GLOW-WHITE", "Alvo Branco. Entrada confirmada.", 1.8);
+                    _TRIGGER("BRANCO", "GLOW-WHITE", "Sincronia 15s: Alvo Branco.", 1.8);
                 } 
-                // GATILHO CORES: Limiar Sniper 0.85 + Slope Estável (< 0.10)
-                else {
-                    if (_val > 0.85 && _slope < 0.10) {
-                        _TRIGGER("VERMELHO", "GLOW-RED", "Strike. Vermelho.", 1.1);
-                    } else if (_val < -0.85 && _slope < 0.10) {
-                        _TRIGGER("PRETO", "GLOW-BLACK", "Strike. Preto.", 0.8);
-                    }
+                else if (_val > 0.85 && _slope < 0.10) {
+                    _TRIGGER("VERMELHO", "GLOW-RED", "Sincronia 15s: Vermelho.", 1.1);
+                } else if (_val < -0.85 && _slope < 0.10) {
+                    _TRIGGER("PRETO", "GLOW-BLACK", "Sincronia 15s: Preto.", 0.8);
                 }
             }
             requestAnimationFrame(_LOOP);
@@ -81,18 +36,15 @@
             const conf = document.getElementById('_CONF');
             display.innerText = txt;
             display.className = `text-8xl font-black italic mb-6 ${cls}`;
-            conf.innerText = "ALVO LOCALIZADO";
+            conf.innerText = "SINAL SINCRONIZADO (15s)";
             _VOZ(v, p);
 
             setTimeout(() => { 
                 display.innerText = "--"; 
                 display.className = "text-8xl font-black italic mb-6";
-                conf.innerText = "Recalibrando Sniper...";
-            }, 8000);
+                conf.innerText = "Aguardando Próxima Janela...";
+            }, 10000); // Exibe por 10s para cobrir a entrada
 
-            // Trava de 30s para evitar duplicidade e garantir a rodada
-            setTimeout(() => { _BUSY = false; }, 30000); 
+            // Trava de 25s para resetar antes da próxima janela de 15/45
+            setTimeout(() => { _BUSY = false; }, 25000); 
         }
-    </script>
-</body>
-</html>
