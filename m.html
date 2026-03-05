@@ -1,12 +1,57 @@
+
+     <!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CORE-STRIKE V3.3.1 | TIMING 15S</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #000; color: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: sans-serif; overflow: hidden; }
+        .GLOW-RED { text-shadow: 0 0 40px #f00; color: #f00; }
+        .GLOW-BLACK { text-shadow: 0 0 40px #fff; color: #eee; }
+        .GLOW-WHITE { text-shadow: 0 0 60px #fff; color: #fff; animation: pulse 0.3s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.1; } }
+    </style>
+</head>
+<body>
+    <div id="L_O" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center text-center">
+        <input type="password" id="_PASS" placeholder="SYNC_15S" class="bg-transparent border-b border-white/10 text-center w-56 p-2 outline-none tracking-[12px] text-sm uppercase">
+        <button onclick="_START()" class="mt-10 text-[9px] text-white/20 tracking-[6px] hover:text-white/50">ENGAGE_SYNC</button>
+    </div>
+
+    <div id="_UI" class="hidden text-center">
+        <div id="_STR" class="text-8xl font-black italic mb-6 tracking-tighter">--</div>
+        <div id="_CONF" class="text-[11px] tracking-[12px] text-white/20 uppercase font-light">Sincronizando Janela 15s</div>
+    </div>
+
+    <script>
+        const _SP = window.speechSynthesis;
+        let _LAST_S = -1;
+        let _BUSY = false;
+
+        function _VOZ(t, p=1) {
+            _SP.cancel();
+            const m = new SpeechSynthesisUtterance(t);
+            m.lang='pt-BR'; m.rate=2.4; m.pitch=p;
+            _SP.speak(m);
+        }
+
+        function _START() {
+            if(document.getElementById('_PASS').value.toLowerCase() === "jarvis102") {
+                document.getElementById('L_O').style.display='none';
+                document.getElementById('_UI').classList.remove('hidden');
+                _VOZ("Sincronia tática de quinze segundos ativada. Aguardando janela de entrada.");
+                _LOOP();
+            }
+        }
+
         function _LOOP() {
             const now = new Date();
             const s = now.getSeconds();
             const m = now.getMinutes();
 
-            // A MÁGICA DO TIMING:
-            // A Blaze gira em ciclos. Geralmente, os segundos 00 e 30 do relógio 
-            // batem com o início/meio das rodadas. 
-            // Ajustamos para disparar perto do segundo 15 ou 45 para bater com o seu cronômetro.
+            // JANELA 15s/45s: Tenta disparar exatamente nesses segundos do relógio
             const _TIMING_WINDOW = (s === 15 || s === 45);
 
             if(_TIMING_WINDOW && !_BUSY) {
@@ -17,16 +62,20 @@
                 const _prev = Math.sin((_t-1) * 0.35) + Math.cos((_t-1) * 0.25);
                 const _slope = Math.abs(_val - _prev); 
 
-                // GATILHO SÓ DISPARA SE A CONFLUÊNCIA FOR ALTA NO SEGUNDO 15/45
+                // GATILHO SNIPER
                 if (Math.abs(_val) < 0.04) {
-                    _TRIGGER("BRANCO", "GLOW-WHITE", "Sincronia 15s: Alvo Branco.", 1.8);
+                    _TRIGGER("BRANCO", "GLOW-WHITE", "Janela Confirmada: Alvo Branco.", 1.8);
                 } 
                 else if (_val > 0.85 && _slope < 0.10) {
-                    _TRIGGER("VERMELHO", "GLOW-RED", "Sincronia 15s: Vermelho.", 1.1);
+                    _TRIGGER("VERMELHO", "GLOW-RED", "Janela Confirmada: Vermelho.", 1.1);
                 } else if (_val < -0.85 && _slope < 0.10) {
-                    _TRIGGER("PRETO", "GLOW-BLACK", "Sincronia 15s: Preto.", 0.8);
+                    _TRIGGER("PRETO", "GLOW-BLACK", "Janela Confirmada: Preto.", 0.8);
                 }
             }
+            
+            // Controle de segundo para não repetir o loop no mesmo segundo
+            if (s !== _LAST_S) { _LAST_S = s; }
+            
             requestAnimationFrame(_LOOP);
         }
 
@@ -36,15 +85,18 @@
             const conf = document.getElementById('_CONF');
             display.innerText = txt;
             display.className = `text-8xl font-black italic mb-6 ${cls}`;
-            conf.innerText = "SINAL SINCRONIZADO (15s)";
+            conf.innerText = "SINAL ATIVO - ENTRADA 15S";
             _VOZ(v, p);
 
             setTimeout(() => { 
                 display.innerText = "--"; 
                 display.className = "text-8xl font-black italic mb-6";
                 conf.innerText = "Aguardando Próxima Janela...";
-            }, 10000); // Exibe por 10s para cobrir a entrada
+            }, 10000);
 
-            // Trava de 25s para resetar antes da próxima janela de 15/45
-            setTimeout(() => { _BUSY = false; }, 25000); 
+            // Trava de 20s: Libera o sistema antes da próxima janela de 15/45
+            setTimeout(() => { _BUSY = false; }, 20000); 
         }
+    </script>
+</body>
+</html>       
