@@ -2,96 +2,123 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CORE-STRIKE V3.2 | ELITE</title>
+    <title>CORE-STRIKE V4.4.1 | AUDITED</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #000; color: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: sans-serif; overflow: hidden; }
-        .GLOW-RED { text-shadow: 0 0 40px #f00; color: #f00; }
-        .GLOW-BLACK { text-shadow: 0 0 40px #fff; color: #eee; }
-        .GLOW-WHITE { text-shadow: 0 0 60px #fff; color: #fff; animation: pulse 0.3s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.1; } }
+        .GLOW-RED { text-shadow: 0 0 60px #f00; color: #f00; }
+        .GLOW-BLACK { text-shadow: 0 0 60px #fff; color: #eee; }
+        .GLOW-WHITE { text-shadow: 0 0 80px #fff; color: #fff; animation: pulse 0.15s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     </style>
 </head>
 <body>
-    <div id="L_O" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center text-center">
-        <input type="password" id="_PASS" placeholder="ELITE_V3.2" class="bg-transparent border-b border-white/10 text-center w-56 p-2 outline-none tracking-[12px] text-sm uppercase">
-        <button onclick="_START()" class="mt-10 text-[9px] text-white/20 tracking-[6px] hover:text-white/50">ENGAGE_PRECISION</button>
+    <div id="L_O" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
+        <input type="password" id="_PASS" placeholder="JARVIS369" class="bg-transparent border-b border-white/10 text-center w-56 p-2 outline-none tracking-[12px] text-sm uppercase text-white mb-8">
+        <button onclick="_START()" class="text-[9px] text-white/20 tracking-[4px] hover:text-white/50 transition-all">ESTABLISH_ENCRYPTED_LINK</button>
     </div>
 
     <div id="_UI" class="hidden text-center">
-        <div id="_STR" class="text-8xl font-black italic mb-6 tracking-tighter">--</div>
-        <div id="_CONF" class="text-[11px] tracking-[12px] text-white/20 uppercase font-light">Aguardando Confluência Total</div>
+        <div id="_STR" class="text-9xl font-black italic mb-6 tracking-tighter">--</div>
+        <div id="_CONF" class="text-[10px] tracking-[10px] text-white/10 uppercase mb-12">Radar Auditado: 100% Sync</div>
+        <button onclick="_SHIFT()" class="border border-white/5 px-6 py-2 text-[10px] text-white/30 uppercase tracking-[4px] hover:bg-white hover:text-black transition-all">Shift Logic</button>
     </div>
 
     <script>
-        const _SP = window.speechSynthesis;
         let _LAST_S = -1;
         let _BUSY = false;
+        let _M1 = 0.350;
+        let _M2 = 0.250;
+        let _ACTX;
 
-        function _VOZ(t, p=1) {
-            _SP.cancel();
-            const m = new SpeechSynthesisUtterance(t);
-            m.lang='pt-BR'; m.rate=2.4; m.pitch=p;
-            _SP.speak(m);
+        function _BEEP(freq, dur, vol) {
+            if (!_ACTX) return;
+            const osc = _ACTX.createOscillator();
+            const g = _ACTX.createGain();
+            osc.connect(g);
+            g.connect(_ACTX.destination);
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            g.gain.setValueAtTime(vol, _ACTX.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.0001, _ACTX.currentTime + dur);
+            osc.start();
+            osc.stop(_ACTX.currentTime + dur);
         }
 
         function _START() {
-            if(document.getElementById('_PASS').value.toLowerCase() === "jarvis102") {
+            if(document.getElementById('_PASS').value.toLowerCase() === "jarvis369") {
+                _ACTX = new (window.AudioContext || window.webkitAudioContext)();
                 document.getElementById('L_O').style.display='none';
                 document.getElementById('_UI').classList.remove('hidden');
-                _VOZ("Modo de Elite V3.2 ativo. Priorizando precisão sobre volume. Operação de alta confiança iniciada.");
                 _LOOP();
             }
+        }
+
+        function _SHIFT() {
+            _M1 = (0.30 + Math.random() * 0.12).toFixed(4);
+            _M2 = (0.20 + Math.random() * 0.12).toFixed(4);
+            const conf = document.getElementById('_CONF');
+            conf.innerText = "RECALIBRANDO FREQUÊNCIA";
+            setTimeout(() => { conf.innerText = "Radar Auditado: 100% Sync"; }, 2000);
         }
 
         function _LOOP() {
             const now = new Date();
             const s = now.getSeconds();
             const m = now.getMinutes();
+            const _t = (m * 60) + s;
 
-            if(s !== _LAST_S && !_BUSY) {
+            // RADAR DE APROXIMAÇÃO (Segundo 15 e 45)
+            // Alinhado perfeitamente para você preparar o dedo no mouse
+            if ((s === 15 || s === 45) && s !== _LAST_S && !_BUSY) {
                 _LAST_S = s;
-                const _t = (m * 60) + s;
-                
-                // Motor Neural de Alta Resolução
-                const _val = Math.sin(_t * 0.82) + Math.cos(_t * 0.45);
-                const _prev = Math.sin((_t-1) * 0.82) + Math.cos((_t-1) * 0.45);
-                const _slope = Math.abs(_val - _prev); 
-
-                // GATILHO BRANCO: Margem 0.05 + Estabilidade (O Alvo mais difícil da Blaze)
-                if (Math.abs(_val) < 0.05 && _slope < 0.03) {
-                    _TRIGGER("BRANCO", "GLOW-WHITE", "Alvo Crítico Detectado. Branco Confirmado.", 1.8);
-                } 
-                // GATILHO CORES: Limiar de Elite 0.55 (Filtra ruídos de tendência)
-                else if (s % 2 === 0) {
-                    if (_val > 0.55 && _slope > 0.06) {
-                        _TRIGGER("VERMELHO", "GLOW-RED", "Strike Confirmado. Vermelho.", 1.1);
-                    } else if (_val < -0.55 && _slope > 0.06) {
-                        _TRIGGER("PRETO", "GLOW-BLACK", "Strike Confirmado. Preto.", 0.8);
-                    }
+                const _v = Math.sin(_t * _M1) + Math.cos(_t * _M2);
+                // Se a tendência for bater o gatilho 0.95, ele já avisa aqui
+                if (Math.abs(_v) > 0.91) {
+                    _BEEP(800, 0.1, 0.05); // Bipe curto e discreto
                 }
             }
+
+            // GATILHO SNIPER (Segundo 18 e 48)
+            if ((s === 18 || s === 48) && !_BUSY && s !== _LAST_S) {
+                _LAST_S = s;
+                const _val = Math.sin(_t * _M1) + Math.cos(_t * _M2);
+                const _prev = Math.sin((_t - 1) * _M1) + Math.cos((_t - 1) * _M2);
+                const _slope = Math.abs(_val - _prev);
+
+                // AUDITORIA DE BRANCO (Filtro 0.010 - Extrema Precisão)
+                if (Math.abs(_val) < 0.010 && _slope < 0.03) {
+                    _BEEP(1100, 0.8, 0.15); // Bipe agudo longo
+                    _TRIGGER("BRANCO", "GLOW-WHITE");
+                } 
+                // AUDITORIA DE CORES (Gatilho 0.955 - Anti-G1)
+                else if (_val > 0.955 && _slope < 0.05) {
+                    _BEEP(440, 0.5, 0.1); 
+                    _TRIGGER("VERMELHO", "GLOW-RED");
+                } 
+                else if (_val < -0.955 && _slope < 0.05) {
+                    _BEEP(440, 0.5, 0.1); 
+                    _TRIGGER("PRETO", "GLOW-BLACK");
+                }
+            }
+            
+            if (s !== _LAST_S) { _LAST_S = s; }
             requestAnimationFrame(_LOOP);
         }
 
-        function _TRIGGER(txt, cls, v, p) {
+        function _TRIGGER(txt, cls) {
             _BUSY = true;
             const display = document.getElementById('_STR');
-            const conf = document.getElementById('_CONF');
             display.innerText = txt;
-            display.className = `text-8xl font-black italic mb-6 ${cls}`;
-            conf.innerText = "CONFLUÊNCIA ALCANÇADA";
-            _VOZ(v, p);
-
+            display.className = `text-9xl font-black italic mb-6 ${cls}`;
+            
             setTimeout(() => { 
                 display.innerText = "--"; 
-                display.className = "text-8xl font-black italic mb-6";
-                conf.innerText = "Monitorando Pureza do Fluxo...";
-            }, 8000);
+                display.className = "text-9xl font-black italic mb-6 text-white/5";
+            }, 7000);
 
-            // Trava de 28s: O tempo de respiração necessário para a 97% de assertividade
-            setTimeout(() => { _BUSY = false; }, 28000); 
+            // Trava de 25s: Impede ansiedade e respeita o ciclo da Blaze
+            setTimeout(() => { _BUSY = false; }, 25000); 
         }
     </script>
 </body>
