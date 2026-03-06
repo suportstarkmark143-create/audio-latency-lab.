@@ -4,46 +4,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CORE-STRIKE V3.3.1 | TIMING 15S</title>
+    <title>CORE-STRIKE V4.1 | OVERKILL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #000; color: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: sans-serif; overflow: hidden; }
-        .GLOW-RED { text-shadow: 0 0 40px #f00; color: #f00; }
-        .GLOW-BLACK { text-shadow: 0 0 40px #fff; color: #eee; }
-        .GLOW-WHITE { text-shadow: 0 0 60px #fff; color: #fff; animation: pulse 0.3s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.1; } }
+        body { background: #000; color: #fff; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: sans-serif; overflow: hidden; }
+        .GLOW-RED { text-shadow: 0 0 60px #f00; color: #f00; font-weight: 900; }
+        .GLOW-BLACK { text-shadow: 0 0 60px #fff; color: #eee; font-weight: 900; }
+        .GLOW-WHITE { text-shadow: 0 0 80px #fff; color: #fff; animation: pulse 0.15s infinite; font-weight: 900; }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.05); } }
+        .btn-shift { border: 1px solid rgba(255,255,255,0.1); padding: 8px 20px; font-size: 11px; border-radius: 4px; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.02); }
+        .btn-shift:active { transform: scale(0.9); background: #fff; color: #000; }
+        #_MONITOR { font-family: monospace; color: #333; font-size: 8px; margin-top: 20px; }
     </style>
 </head>
 <body>
     <div id="L_O" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center text-center">
-        <input type="password" id="_PASS" placeholder="SYNC_15S" class="bg-transparent border-b border-white/10 text-center w-56 p-2 outline-none tracking-[12px] text-sm uppercase">
-        <button onclick="_START()" class="mt-10 text-[9px] text-white/20 tracking-[6px] hover:text-white/50">ENGAGE_SYNC</button>
+        <input type="password" id="_PASS" placeholder="ACCESS_V4.1" class="bg-transparent border-b border-white/10 text-center w-56 p-2 outline-none tracking-[12px] text-sm uppercase text-white">
+        <button onclick="_START()" class="mt-10 text-[9px] text-white/30 tracking-[6px] hover:text-white/80 transition-all">ESTABLISH_LINK</button>
     </div>
 
     <div id="_UI" class="hidden text-center">
-        <div id="_STR" class="text-8xl font-black italic mb-6 tracking-tighter">--</div>
-        <div id="_CONF" class="text-[11px] tracking-[12px] text-white/20 uppercase font-light">Sincronizando Janela 15s</div>
+        <div id="_STR" class="text-9xl italic mb-6 tracking-tighter transition-all duration-300">--</div>
+        <div id="_CONF" class="text-[10px] tracking-[12px] text-white/20 uppercase mb-12">Neural Engine: Active</div>
+        
+        <button onclick="_SHIFT()" class="btn-shift text-white/40 uppercase tracking-widest hover:text-white">Shift Logic</button>
+        <div id="_MONITOR">M1: 0.350 | M2: 0.250</div>
     </div>
 
     <script>
-        const _SP = window.speechSynthesis;
         let _LAST_S = -1;
         let _BUSY = false;
-
-        function _VOZ(t, p=1) {
-            _SP.cancel();
-            const m = new SpeechSynthesisUtterance(t);
-            m.lang='pt-BR'; m.rate=2.4; m.pitch=p;
-            _SP.speak(m);
-        }
+        let _M1 = 0.35;
+        let _M2 = 0.25;
 
         function _START() {
-            if(document.getElementById('_PASS').value.toLowerCase() === "jarvis102") {
+            // NOVA CHAVE DE SEGURANÇA APLICADA: jarvis369
+            if(document.getElementById('_PASS').value.toLowerCase() === "jarvis369") {
                 document.getElementById('L_O').style.display='none';
                 document.getElementById('_UI').classList.remove('hidden');
-                _VOZ("Sincronia tática de quinze segundos ativada. Aguardando janela de entrada.");
                 _LOOP();
             }
+        }
+
+        function _SHIFT() {
+            _M1 = (0.20 + Math.random() * 0.30).toFixed(3);
+            _M2 = (0.15 + Math.random() * 0.25).toFixed(3);
+            document.getElementById('_MONITOR').innerText = `M1: ${_M1} | M2: ${_M2}`;
+            const conf = document.getElementById('_CONF');
+            conf.innerText = "ALGORITMO RECALIBRADO";
+            setTimeout(() => { conf.innerText = "Neural Engine: Active"; }, 2000);
         }
 
         function _LOOP() {
@@ -51,52 +60,41 @@
             const s = now.getSeconds();
             const m = now.getMinutes();
 
-            // JANELA 15s/45s: Tenta disparar exatamente nesses segundos do relógio
-            const _TIMING_WINDOW = (s === 15 || s === 45);
+            const _TIMING_WINDOW = (s === 18 || s === 48);
 
-            if(_TIMING_WINDOW && !_BUSY) {
+            if(_TIMING_WINDOW && !_BUSY && s !== _LAST_S) {
+                _LAST_S = s;
                 const _t = (m * 60) + s;
                 
-                // Motor Sniper V3.3.1
-                const _val = Math.sin(_t * 0.35) + Math.cos(_t * 0.25);
-                const _prev = Math.sin((_t-1) * 0.35) + Math.cos((_t-1) * 0.25);
+                const _val = Math.sin(_t * _M1) + Math.cos(_t * _M2);
+                const _prev = Math.sin((_t - 1) * _M1) + Math.cos((_t - 1) * _M2);
                 const _slope = Math.abs(_val - _prev); 
 
-                // GATILHO SNIPER
-                if (Math.abs(_val) < 0.04) {
-                    _TRIGGER("BRANCO", "GLOW-WHITE", "Janela Confirmada: Alvo Branco.", 1.8);
+                if (Math.abs(_val) < 0.035) {
+                    _TRIGGER("BRANCO", "GLOW-WHITE");
                 } 
-                else if (_val > 0.85 && _slope < 0.10) {
-                    _TRIGGER("VERMELHO", "GLOW-RED", "Janela Confirmada: Vermelho.", 1.1);
-                } else if (_val < -0.85 && _slope < 0.10) {
-                    _TRIGGER("PRETO", "GLOW-BLACK", "Janela Confirmada: Preto.", 0.8);
+                else if (_val > 0.84 && _slope < 0.11) {
+                    _TRIGGER("VERMELHO", "GLOW-RED");
+                } else if (_val < -0.84 && _slope < 0.11) {
+                    _TRIGGER("PRETO", "GLOW-BLACK");
                 }
             }
-            
-            // Controle de segundo para não repetir o loop no mesmo segundo
-            if (s !== _LAST_S) { _LAST_S = s; }
-            
             requestAnimationFrame(_LOOP);
         }
 
-        function _TRIGGER(txt, cls, v, p) {
+        function _TRIGGER(txt, cls) {
             _BUSY = true;
             const display = document.getElementById('_STR');
-            const conf = document.getElementById('_CONF');
             display.innerText = txt;
-            display.className = `text-8xl font-black italic mb-6 ${cls}`;
-            conf.innerText = "SINAL ATIVO - ENTRADA 15S";
-            _VOZ(v, p);
+            display.className = `text-9xl italic mb-6 ${cls}`;
 
             setTimeout(() => { 
                 display.innerText = "--"; 
-                display.className = "text-8xl font-black italic mb-6";
-                conf.innerText = "Aguardando Próxima Janela...";
-            }, 10000);
+                display.className = "text-9xl italic mb-6 text-white/10";
+            }, 7000);
 
-            // Trava de 20s: Libera o sistema antes da próxima janela de 15/45
-            setTimeout(() => { _BUSY = false; }, 20000); 
+            setTimeout(() => { _BUSY = false; }, 25000); 
         }
     </script>
 </body>
-</html>       
+</html>
